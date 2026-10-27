@@ -38,11 +38,14 @@ app = FastAPI(
 initialize_database()
 
 # Allow requests from the local React development server.
+
+# Allow requests from local development and the deployed Vercel frontend.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
         "http://localhost:5174",
+        "https://fin-pilot-sentinel.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
