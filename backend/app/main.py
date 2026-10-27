@@ -15,6 +15,7 @@ from backend.app.database import (
     add_transaction,
     initialize_database,
     list_transactions,
+    using_postgres,
 )
 
 
@@ -246,7 +247,7 @@ def financial_assistant(request: AssistantQuestion):
 
     return {
         "answer": answer,
-        "data_source": "sqlite",
+        "data_source": "postgresql" if using_postgres() else "sqlite",
         "ai_used": False,
         "calculations": {
             "income": round(income, 2),
@@ -356,7 +357,7 @@ def get_analytics():
 @app.get("/db/transactions")
 def get_db_transactions():
     return {
-        "data_source": "sqlite",
+        "data_source": "postgresql" if using_postgres() else "sqlite",
         "transactions": list_transactions(),
     }
 
@@ -383,7 +384,7 @@ def create_db_transaction(transaction: TransactionCreate):
     return {
         "message": "Transaction saved successfully.",
         "id": transaction_id,
-        "data_source": "sqlite",
+        "data_source": "postgresql" if using_postgres() else "sqlite",
     }
 
 @app.get("/db/analytics")
@@ -413,7 +414,7 @@ def get_db_analytics():
             )
 
     return {
-        "data_source": "sqlite",
+        "data_source": "postgresql" if using_postgres() else "sqlite",
         "income": income,
         "expenses": expenses,
         "remaining": income - expenses,
@@ -436,7 +437,7 @@ def get_financial_forecast():
 
     if not transactions:
         return {
-            "data_source": "sqlite",
+            "data_source": "postgresql" if using_postgres() else "sqlite",
             "forecast_type": "rule_based",
             "message": "Add transactions to generate a forecast.",
             "historical_transaction_count": 0,
@@ -467,7 +468,7 @@ def get_financial_forecast():
 
     if not valid_dates:
         return {
-            "data_source": "sqlite",
+            "data_source": "postgresql" if using_postgres() else "sqlite",
             "forecast_type": "rule_based",
             "message": "No transactions have valid dates.",
             "historical_transaction_count": len(transactions),
@@ -509,7 +510,7 @@ def get_financial_forecast():
         })
 
     return {
-        "data_source": "sqlite",
+        "data_source": "postgresql" if using_postgres() else "sqlite",
         "forecast_type": "rule_based",
         "historical_transaction_count": len(transactions),
         "historical_window_days": 30,
@@ -610,7 +611,7 @@ def get_financial_alerts():
         })
 
     return {
-        "data_source": "sqlite",
+        "data_source": "postgresql" if using_postgres() else "sqlite",
         "alert_count": len(alerts),
         "alerts": alerts
     }
